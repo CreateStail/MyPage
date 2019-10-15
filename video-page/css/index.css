@@ -1,0 +1,9 @@
+.thumbnail{
+	width: 200px;
+	height: 240px;
+	font-size: 12px;
+	float: left;
+	margin: 20px;
+	background-color: #fff;
+	position: relative;
+}
