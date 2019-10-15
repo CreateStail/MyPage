@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+		<title>管理登录</title>
+		<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+		<link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
+		<link href="../static/css/index.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div class="i-container-small i-padded-tb-massive" style="max-width: 30em !important;">
+			<div class="ur container">
+				<div class="ui middle aligned center aligned grid">
+					<div class="column">
+						<h2 class="ui teal image header">
+          				 <div class="content">
+             				管理后台登录
+           				</div>
+         				</h2>
+         				<div id="loginForm">
+         					<form @submit.prevent="onSubmit" class="ui large form" method="post" action="#">
+							<div class="ui  segment">
+								<div class="field">
+									<div class="ui left icon input">
+										<i class="user icon"></i>
+										<input type="text" name="username" placeholder="用户名" v-model="user.username" class="Required" id="username">
+									</div>
+								</div>
+								<div class="field">
+									<div class="ui left icon input">
+										<i class="lock icon"></i>
+										<input type="password" name="password" placeholder="密码" v-model="user.password" class="Required" id="password">
+									</div>
+								</div>
+								<button class="ui fluid large teal submit button" >登   录</button>
+							</div>
+							<div class="ui mini negative message" style="display: none;" id="checkForm">请检查必填项</div>
+							</form>
+         				</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+	<!-- axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script>
+	  var user={
+		  		'username':'',
+		  		'password':''
+	  			}
+	  var vm = new Vue({
+	  	el:'#loginForm',
+	  	data:{
+	  		user
+	  	},
+	  	methods:{
+	  		onSubmit(){
+	  			var formData = new FormData();
+	  			for(var key in this.user){
+	  				formData.append(key,user[key]);
+	  				if($('#'+key).hasClass('Required')&&user[key] == ''){
+	  					$('#checkForm').show();
+	  					return;
+	  				}else{
+	  					$('#checkForm').hide();
+	  				}
+	  			}
+	  			
+//	  			$.each($('.Required'), function(i,item) {
+//					if($(this).val() == null || $(this).val() == ''){
+//						
+//					  		
+//				}
+	  		
+	  			axios({
+	  				method:"post",
+	  				url:"/blog-server/admin/login",
+	  				headers:{
+	  					"Content-Type":"multipart/form-data"
+	  				},
+	  				withCredentials:true,
+	  				data:formData
+	  			}).then((res)=>{
+	  				if(res.data.code == 0){
+	  					window.localStorage.setItem("token",res.data.msg);
+	  					window.location.href="blogs.html";
+	  				}else if(res.data.code == -1){
+	  					layer.msg(res.data.msg,{
+	  						offset: 'rb',
+							icon:2,
+							area: ['270px', '70px']
+	  					})
+	  				}
+	  				
+	  			});
+	  		}
+	  	}
+	  })
+	</script>
+</html>
