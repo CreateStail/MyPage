@@ -63,13 +63,10 @@
 							<input type="text" name="title" placeholder="标题" id="title"/>
 						</div>
 						<div class="field">
-							<div class="ui selection dropdown">
+							<div class="ui selection">
 								<input type="hidden" name="type" />
-								<i class="dropdown icon"></i>
-								<div class="default text">分类</div>
-								<div class="menu" id="select">
-									<div class="item" data-value="1">错误日志</div>
-									<div class="item" data-value="2">开发者日志</div>
+								<div class="menu">
+									<select id="select" placeholder="分类"></select>
 								</div>
 							</div>
 						</div>
@@ -149,6 +146,7 @@
 		});
 
 		$(function() {
+			init();
 			blogTable();
 		})
 		
@@ -235,7 +233,7 @@
 					{
 						title:"更新时间",
 						align:"center",
-						field:"update_time"
+						field:"updateTime"
 					},
 					{
 						title: "操作",
@@ -252,9 +250,30 @@
 		
 		function search(){
 			keyMap.title = $('#title').val();
-			keyMap.type_id = $('#select').val();
-			keyMap.recommend = $('#recommend').val();
+			if($('#select').val() != "请选择"){
+				keyMap.type_id = $('#select').val();
+			}else{
+				keyMap.type_id = "";
+			}
+			keyMap.recommend = $('input[name="recommend"]').is("checked");
 			$("#blogTable").bootstrapTable('refresh',keyMap);
+		}
+		
+		function init(){
+			$.ajax({
+				url:"/blog-server/admin/listAllType",
+				method:"get",
+				async:false,
+				success:function(res){
+					if(res.code === 0){
+						var html = $("#select");
+						html.append("<option>请选择</option>");
+						for(var i=0;i<res.data.length;i++){
+							html.append("<option value=" +res.data[i].id+">"+ res.data[i].name +"</option>")
+						}
+					}
+				}
+			})
 		}
 	</script>
 
